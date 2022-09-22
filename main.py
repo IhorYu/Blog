@@ -15,7 +15,7 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///blog.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///blog.db")
 ckeditor = CKEditor(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -30,13 +30,13 @@ gravatar = Gravatar(app,
                     use_ssl=False,
                     base_url=None)
 
-#CONNECT TO DB
+# CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-#CONFIGURE TABLES
+# CONFIGURE TABLES
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -93,15 +93,18 @@ class Comments(db.Model):
 db.create_all()
 db.session.commit()
 
+
 def admin_only(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
-        #If id is not 1 then return abort with 403 error
+        # If id is not 1 then return abort with 403 error
         if not current_user.is_authenticated or current_user.id != 1:
             return abort(403)
-        #Otherwise continue with the route function
+        # Otherwise continue with the route function
         return function(*args, **kwargs)
+
     return decorated_function
+
 
 @app.route('/')
 def get_all_posts():
